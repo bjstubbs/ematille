@@ -76,6 +76,13 @@ python ../ematilleSumFile.py /cluster/tufts/bj/ref/speTri2.fa
 
 This script can be run to generate the sums detailed above
 
+We then combine the reference sums into one file for easy use:
+
+1. python ematilleCombRef.py flist.txt
+
+produces: flist.txt.ref.csv
+
+
 ## Split and Sum References
 
 In this step, Ematille first splits the references into roughly equal
@@ -137,3 +144,145 @@ python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/mouse
 python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/squirrel
 ```
 Running this script does the summation of each part in the splits directory. Now we are ready to mine.
+
+## Score Boulders and Choose
+
+Next, for each species in our zoo, we want find the parts of that animal
+that are most different from the other animals in our zoo. We do this by
+first transforming the reference counts we generated into k-mer ratios.
+These ratios should help normalize the distances we will calculate.
+Next, for each animal we loop through the boulders (with sizes over 800k
+bases) calculating the distance between the k-mer ratios in the boulder
+and each of the references.
+
+Then, for each species in our zoo, we choose the top 10 boulders to
+explore based on the distance matrices we just calculated. We calculate
+the median of the ranks of the non-target species in our matrix and
+choose the top most boulders. This should represent the 1MB chunk that
+is most different from our zoo as a whole.
+
+-   flist.txt.coyote.csv
+
+-   flist.txt.coyotechosen.txt
+
+
+in ematille we do this by:
+
+1. python ematilleScoreParts.py flist.txt
+
+This will loop through each species and each part of a reference and score the parts vs the wholes if
+the part is less than 800k it does not get considered
+
+This produces files like:
+
+-   flist.txt.coyote.csv
+
+Then we can pick the best boulders using:
+
+1. python ematilleChoosePart.py flist.txt
+
+which will generate a list of the 10 best boulders per species and produce files like:
+
+flist.txt.coyotechosen.txt
+
+```{}
+coyotea1e64685.fa.csv
+coyotea1e64671.fa.csv
+coyotea1e62685.fa.csv
+coyotea1e62085.fa.csv
+coyotea1e6405.fa.csv
+coyotea1e62896.fa.csv
+coyotea1e64330.fa.csv
+coyotea1e64673.fa.csv
+coyotea1e62237.fa.csv
+coyotea1e63878.fa.csv
+```
+
+## Score Parts and choose Sequences
+
+We then score the chosen boulders to find the best sequences (called
+rocks) to use as PCR templates. We use a similar setup to the reference
+summming we did earlier. We start by creating a double ended queue to
+pan through the boulder. As we pan, we construct an 8-mer key cursor and
+a 150-base sequence cursor. The 8-mer key is used to lookup the value of
+that 8-mer in the different genomes. The 150-base sequence keeps track
+of the running string base sequence and the sum of the k-mers used to
+build it. The result is a csv file per boulder investigated that
+contains the 150-base sequences and the scores in each genome in the
+zoo. In this step we only consider potential boulders that are less than
+5 million bases.
+
+At this point we also do a round of information content filtering. We
+want to make sure that candidate sequences contain enough variation to
+produce valid primers. We use a compression based approach similar to
+Lempel and Ziv [@1055501]. We pan through the potential rocks and
+calculate the minimum number of 3-mers it would take to generate the
+sequence. We only keep sequences that require a vocabulary of 32 of the
+possible 64 3-mers.
+
+We focus on only the results where the scores in the target species is
+in the top 20%, remove duplicates, and re-scale to ranks. We then
+calculate the difference between the rank of the sequence in the host
+and the median rank of sequence in every other species in our zoo and
+report out the top five rocks for each the top ten boulders (if
+possible).
+
+-   flist.txt.coyotechosen.txt
+
+-   flist.txt.coyotechosen.txtb0Scored.csv
+
+-   flist.txt.coyotechosen.txtb1Scored.csv
+
+In ematille we do this by:
+
+1. python ematilleChooseSequenceMBCover.py flist.txt
+
+This will go through the chosen boulders and pick out the top 5 sequences per boulder
+
+flist.txt.mousechosen.txtb0Scored.csv
+
+```{}
+
+```
+
+
+## Generate Primers
+
+Primers are selected using default setting in Primer3
+[@Untergasser2012-iq]. Primer3 is an industry standard primer picker
+that designs primers based template sequences while accounting for
+biological and experimental considerations such as oligonucleotide
+melting temperature, size, GC content, and primer-dimer possibilities.
+
+We process the output of primer3 into three files per species.
+
+-   flist.txt.snake.primer3.out - the output from primer3
+
+-   flist.txt.snake.primer3DF.csv - a species specific csv containing
+    left, internal, and right primers
+
+-   flist.txt.snake.primer3List.txt - a long formatted file of primers
+    to be used in scoring
+
+::: adjustbox
+width=1
+
+      seqid     left                        inner                       right
+  --- --------- --------------------------- --------------------------- -----------------------
+    1 snake-0   CTGCAATGCGCTCTACATGG        CGCGTGCTGTGGTGGGTGTT        GCGGAGTATGGGTGTTACGT
+    2 snake-1   GCACTTAGACTTATATACCGCTTCA   TGCTTTACAGCCCTCTCTAAGCGGT   GGTCGGTAAAATGAGGACCCA
+:::
+
+## Score Primers
+
+We want each primer set to appear often in our target reference and
+rarely in others. In order to verify this, we once again pan through the
+reference genomes. We keep track of both pairs (left and right primer
+hits) and trios (left, right, and central oligo). The results are a csv
+for each species/species combination containing the counts of each
+primers pair/trio.
+
+After selecting a final primer set, blast is used to verify the utility
+of the sequences by comparing them across large set of core nucleotide
+references.
+
