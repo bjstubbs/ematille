@@ -235,16 +235,42 @@ possible).
 
 In ematille we do this by:
 
+1. python ematilleScoreChosen.py flist.txt
+
+This will go through the chosen boulders and score every 150 base sequence producing files like:
+
+-   flist.txt.coyotechosen.txtb0Scored.csv
+
+Then, we choose the best 150 base sequences from what we just scored
+
 1. python ematilleChooseSequenceMBCover.py flist.txt
 
-This will go through the chosen boulders and pick out the top 5 sequences per boulder
+This produces primer 3 files for each species
 
-flist.txt.mousechosen.txtb0Scored.csv
+flist.txt.mouse.primer3.txt
 
 ```{}
-
+SEQUENCE_ID=mouse0-0
+SEQUENCE_TEMPLATE=ATACACACACACTACATATACACTATACACACCCCACACATATACCATGTACAACATACCCCCACACATACACTGTTACATGTGTCCCCTACCACCACATATGTACATGCACCCTCACATATGCCTTCGCACATACTCACACCACATAAC
+PRIMER_TASK=generic
+PRIMER_PICK_LEFT_PRIMER=1
+PRIMER_PICK_INTERNAL_OLIGO=1
+PRIMER_PICK_RIGHT_PRIMER=1
+PRIMER_EXPLAIN_FLAG=1
+=
 ```
 
+and a shell script to run them
+
+flist.txt.primer3.sh
+
+```{}
+primer3_core flist.txt.coyote.primer3.txt --output=flist.txt.coyote.primer3.out
+primer3_core flist.txt.snake.primer3.txt --output=flist.txt.snake.primer3.out
+primer3_core flist.txt.deertick.primer3.txt --output=flist.txt.deertick.primer3.out
+primer3_core flist.txt.mouse.primer3.txt --output=flist.txt.mouse.primer3.out
+primer3_core flist.txt.squirrel.primer3.txt --output=flist.txt.squirrel.primer3.out
+```
 
 ## Generate Primers
 
