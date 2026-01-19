@@ -320,4 +320,5 @@ This parses the output of primer3 and creates a csv for each species of the left
 
 These cvs are then used to count the number of exact matches in the parts we started with.
 
+python ematilleOligoCounter.py /ref/exp3Ref/splits/coyote flist.txt.coyote.primer3DF.csv
 
