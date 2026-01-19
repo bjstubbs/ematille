@@ -118,4 +118,22 @@ faSplit about /cluster/tufts/bj/ref/mouseTE.fa 1000000 splits/mouse/mousea1e6
 faSplit about /cluster/tufts/bj/ref/sqTE.fa 1000000 splits/squirrel/squirrela1e6
 ```
 
-After running this shell script we should have a directory called spliotr wi
+After running this shell script we should have a directory called splits with the genome chopped up.
+
+NOTE: Here is where you can split the TE data instead of the references. You can download the repeatmasker tracks from the UCSC genome
+browser as bigbed files, convert to bed, then use bedtools to extract the regions identified in the repeatmasker track to a new fasta file. This file would be the input instead of the references so that the data in the "splits" directory will only be TE data.
+
+Now, we can sum the pieces like we did with the references:
+
+1. python genFolderSum.py flist.txt
+
+generates a shell script: flist.txt.FolderSum.sh
+
+```{}
+python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/coyote
+python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/snake
+python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/deertick
+python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/mouse
+python ../ematilleSumFolder.py /cluster/tufts/bj/ematille/exp4/splits/squirrel
+```
+Running this script does the summation of each part in the splits directory. Now we are ready to mine.
