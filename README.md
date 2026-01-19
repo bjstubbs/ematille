@@ -304,11 +304,20 @@ width=1
 We want each primer set to appear often in our target reference and
 rarely in others. In order to verify this, we once again pan through the
 reference genomes. We keep track of both pairs (left and right primer
-hits) and trios (left, right, and central oligo). The results are a csv
+hits) and trios (left, right, and central oligo within 250 bases). The results are a csv
 for each species/species combination containing the counts of each
 primers pair/trio.
 
 After selecting a final primer set, blast is used to verify the utility
 of the sequences by comparing them across large set of core nucleotide
 references.
+
+This is done in ematille by:
+
+1. python ematilleParsePrimer3.py flist.txt
+
+This parses the output of primer3 and creates a csv for each species of the left, central, and right primers
+
+These cvs are then used to count the number of exact matches in the parts we started with.
+
 
