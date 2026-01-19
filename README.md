@@ -66,11 +66,13 @@ This is done in ematille as follows:
 
 generates a shell script flist.txt.RefSum.sh:
 
+```{}
 python ../ematilleSumFile.py /cluster/tufts/bj/ref/GCA_034620425.1_Cla-1_genomic.fna
 python ../ematilleSumFile.py /cluster/tufts/bj/ref/GCA_023053685.1_rDiaPun1.0.p_genomic.fna
 python ../ematilleSumFile.py /cluster/tufts/bj/ref/GCF_000208615.1.fa
 python ../ematilleSumFile.py /cluster/tufts/bj/ref/mm39.fa
 python ../ematilleSumFile.py /cluster/tufts/bj/ref/speTri2.fa
+```
 
 This script can be run to generate the sums detailed above
 
@@ -108,10 +110,12 @@ In Ematille we do this by:
 
 generates a shell script flist.txt.Split.sh: 
 
-faSplit about /cluster/tufts/slonimlab/bstubb01/ref/GCA_034620425.1_Cla-1_genomicTE.fna 1000000 splits/coyote/coyotea1e6
-faSplit about /cluster/tufts/slonimlab/bstubb01/ref/GCA_023053685.1_rDiaPun1.0.p_genomicTE.fna 1000000 splits/snake/snakea1e6
-faSplit about /cluster/tufts/slonimlab/bstubb01/ref/GCF_000208615.1TE.fa 1000000 splits/deertick/deerticka1e6
-faSplit about /cluster/tufts/slonimlab/bstubb01/ref/mouseTE.fa 1000000 splits/mouse/mousea1e6
-faSplit about /cluster/tufts/slonimlab/bstubb01/ref/sqTE.fa 1000000 splits/squirrel/squirrela1e6
+```{}
+faSplit about /cluster/tufts/bj/ref/GCA_034620425.1_Cla-1_genomicTE.fna 1000000 splits/coyote/coyotea1e6
+faSplit about /cluster/tufts/bj/ref/GCA_023053685.1_rDiaPun1.0.p_genomicTE.fna 1000000 splits/snake/snakea1e6
+faSplit about /cluster/tufts/bj/ref/GCF_000208615.1TE.fa 1000000 splits/deertick/deerticka1e6
+faSplit about /cluster/tufts/bj/ref/mouseTE.fa 1000000 splits/mouse/mousea1e6
+faSplit about /cluster/tufts/bj/ref/sqTE.fa 1000000 splits/squirrel/squirrela1e6
+```
 
-
+After running this shell script we should have a directory called spliotr wi
