@@ -14,7 +14,7 @@ and setup. Input to Ematille consists of a text file describing the
 reference species and locations of the fasta files containing their
 genomes. Instead of mining the entire genome, you can also provide the
 regions of the reference genome that repeatmasker identified as
-translatable elements extracted from the reference genome as the
+transposable or repetitive elements extracted from the reference genome as the
 reference.
 
 flist.txt
